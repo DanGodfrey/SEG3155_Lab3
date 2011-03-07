@@ -13,16 +13,10 @@ public class SocketClient {
 	private static int expectedFrame = 0;
 	
 	public static void main(String[] args) {
-		String ip = "";
-		int port = 0;
+		String ip = "localhost";
+		int port = 9999;
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		System.out.println("Enter server ip: ");
-		try {
-			ip = br.readLine();
-			System.out.println("Enter server port: ");
-		} catch (IOException e1) {
-			System.out.println("I/O Error!");
-		}
+		
 		
 		Connect(ip,port);
 		
@@ -66,16 +60,24 @@ public class SocketClient {
 				System.err.println("Couldn't get I/O for the connection to: hostname");
 		}
 		
-		os.println("reuest=to-connect");
 		boolean notConnected = true;
+		System.out.println("Attempting to connect to primary...");
+		os.println("request-to-connect");
 		while(notConnected)
 		{
 			try {
 				String line = is.readLine();
-				if (line != "")
+				System.out.println("line: " + line);
+				if (line != "connection-accepted")
 				{
+					line = is.readLine();
+					while(line !="")
+					{
+						line = is.readLine();
+					}
 					address = line;
 					notConnected = false;
+					System.out.println("Connected to server");
 				}
 			} catch (IOException e) {
 				System.out.println("I/O Exception!");
