@@ -28,8 +28,8 @@ public class SocketClient {
 		OutgoingListener outListener = new OutgoingListener();
 		outListener.start();
 		
-		IncomingListener inListener = new IncomingListener();
-		inListener.start();
+		//IncomingListener inListener = new IncomingListener();
+		//inListener.start();
 		
 		while (true){
 			try {
@@ -57,7 +57,8 @@ public class SocketClient {
 		try {
 			clientSocket = new Socket(ip, port);
 			os = new PrintStream(clientSocket.getOutputStream());
-			is = new DataInputStream(clientSocket.getInputStream());
+			BufferedInputStream bis = new BufferedInputStream(clientSocket.getInputStream());
+		 	is = new DataInputStream(bis);
 		} 
 		catch (UnknownHostException e) {
 			System.err.println("Don't know about host: hostname");
@@ -197,7 +198,8 @@ public class SocketClient {
 				try {
 					if (is.available()>0)
 					{
-						is.mark(10000);
+						
+						is.mark(9000);
 						String line = is.readLine();
 						if (line.startsWith(Frame.getFlag()))
 						{
@@ -222,6 +224,7 @@ public class SocketClient {
 						}
 						else{
 							is.reset();
+							//is.notify();
 						}
 					}
 				} catch (IOException e) {
