@@ -3,7 +3,6 @@ package application;
 import java.io.*;
 import java.math.BigInteger;
 import java.net.*;
-import java.nio.CharBuffer;
 
 public class SocketClient {
 	
@@ -13,7 +12,7 @@ public class SocketClient {
 	private static String toAddress;
 	private static int windowSize = 7;
 	private static int unACKEDFrames = 0;
-	private static int expectedACK = 0;
+	
 	
 	//private static int expectedFrame = 0;
 	
@@ -23,25 +22,25 @@ public class SocketClient {
 	private static PipedOutputStream cTocOS = new PipedOutputStream();
 	private static PipedInputStream cTocIS ;
 	private static PrintStream cTocDOS = new PrintStream(cTocOS);
-	private static DataInputStream cTocDIS ;
+	private static BufferedReader cTocDIS ;
 	
 	private static PipedOutputStream sTocOS = new PipedOutputStream();
 	private static PipedInputStream sTocIS ;
 	private static PrintStream sTocDOS = new PrintStream(sTocOS);
-	private static DataInputStream sTocDIS ;
+	private static BufferedReader sTocDIS ;
 	
-	private static DataInputStream is;
+	private static BufferedReader is;
 	
 	public static void main(String[] args) {
 		String ip = "localhost";
 		int port = 9999;
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		try {
-			PipedInputStream cTocIS = new PipedInputStream(cTocOS);
-			cTocDIS = new DataInputStream(cTocIS);
+			cTocIS = new PipedInputStream(cTocOS);
+			cTocDIS = new BufferedReader(new InputStreamReader(cTocIS));
 			
-			PipedInputStream sTocIS = new PipedInputStream(sTocOS);
-			sTocDIS = new DataInputStream(sTocIS);
+			sTocIS = new PipedInputStream(sTocOS);
+			sTocDIS = new BufferedReader(new InputStreamReader(sTocIS));
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -104,8 +103,8 @@ public class SocketClient {
 		try {
 			clientSocket = new Socket(ip, port);
 			os = new PrintStream(clientSocket.getOutputStream());
-			BufferedInputStream bis = new BufferedInputStream(clientSocket.getInputStream());
-		 	is = new DataInputStream(bis);
+			is = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+		 	
 		} 
 		catch (UnknownHostException e) {
 			System.err.println("Don't know about host: hostname");
@@ -148,7 +147,7 @@ public class SocketClient {
 			while(true)
 			{
 				try {
-					if (sTocDIS.available()>0)
+					if (sTocDIS.ready())
 					{
 						
 						String line = sTocDIS.readLine();
@@ -244,7 +243,7 @@ public class SocketClient {
 			while(true)
 			{
 				try {
-					if (cTocDIS.available()>0)
+					if (cTocDIS.ready())
 					{
 						String line = cTocDIS.readLine();
 						Frame recFrame = new Frame(line);

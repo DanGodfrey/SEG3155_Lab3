@@ -35,9 +35,9 @@ public class SocketServer {
 				
 	// As long as we receive data, echo that data back to the client.
 				while (true) {				
-						DataInputStream is = null;
+						BufferedReader is = null;
                     	Socket clientSocket = echoServer.accept();
-                    	is = new DataInputStream(clientSocket.getInputStream());
+                    	is = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                     	if (is.readLine().equalsIgnoreCase("request-to-connect"))
                     	{
 	                    	System.out.println("client accepted");
@@ -57,7 +57,7 @@ public class SocketServer {
 		
 	private static class UserThread extends Thread
 	{
-		private DataInputStream is = null;
+		private BufferedReader is = null;
 		private PrintStream os = null;
 		private Socket clientSocket = null;
 		private ArrayList<UserThread> clientThreads;
@@ -75,7 +75,7 @@ public class SocketServer {
 			String line;
 			
 			try {
-				is = new DataInputStream(clientSocket.getInputStream());
+				is = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 				os = new PrintStream(clientSocket.getOutputStream());
 				
 				os.println("connection-accepted");
@@ -104,7 +104,7 @@ public class SocketServer {
 						//System.out.println("User " + address + " can send");
 						while (!isFinished)
 						{
-							if (is.available() > 0)
+							if (is.ready())
 							{
 								line = is.readLine();
 								if (line.equalsIgnoreCase("want-to-send"))
@@ -150,7 +150,7 @@ public class SocketServer {
 						//System.out.println("Next to Send = " + nextToSend);
 						line = "";
 					}
-					else if (is.available() > 0)
+					else if (is.ready())
 					{
 						line = is.readLine();
 						if (line.startsWith(Frame.getFlag()))
