@@ -1,5 +1,7 @@
 package application;
 
+import java.math.BigInteger;
+
 public class Frame {
 	
 	private static String flag = "01111110";
@@ -162,7 +164,9 @@ public class Frame {
 	public String getDecodedInfo() {
 		
 		String info = this.frame.substring(32,frame.length() - 24);
-		
-		return info;
+		BigInteger bi = new BigInteger(info,2);
+		byte[] inBytes = bi.toByteArray();
+
+		return new String(inBytes);
 	}
 }

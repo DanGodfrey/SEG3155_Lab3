@@ -160,8 +160,13 @@ public class SocketClient {
 							Thread.sleep(200);
 							byte[] inBytes = buff.getBytes();
 							String info = "";
+							
 							BigInteger bi = new BigInteger(inBytes);
 							info = bi.toString(2);
+							while (info.length() % 8 != 0)
+							{
+								info = 0 + info;
+							}
 							String infoToSend = "";
 							int k = 0;
 							for (int i = 0; i < info.length();i++)
@@ -256,7 +261,7 @@ public class SocketClient {
 							{
 								String sourceClientBin = recFrame.getSourceAddressBinaryFromFrame();
 								int sourceClient = Integer.parseInt(sourceClientBin,2);
-								System.out.println("User " + sourceClient + " says: " + line);
+								System.out.println("User " + sourceClient + " says: " + recFrame.getDecodedInfo());
 								this.SendACKFrame(ns,sourceClientBin);
 							}
 								//TODO: need code to send ACK here	
