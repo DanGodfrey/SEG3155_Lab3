@@ -113,13 +113,18 @@ public class SocketServer {
 								}
 								else if (line.startsWith(Frame.getFlag()))
 								{
-									System.out.println("User " + address + " sends frame Legth-" + line.length() + " : " + line);
-									for (int i = 0; i < connections.size();i++)
+									Frame recFrame = new Frame(line);
+									int toAddress = Integer.parseInt(recFrame.getDestinationAddressBinaryFromFrame(), 2);
+									
+									if (toAddress > connections.size() || toAddress < 0 || toAddress == address)
 									{
-										if(i != address)
-										{
-											connections.get(i).os.println(line);
-										}
+										System.out.println("User " + address +" sent to invalid address " + toAddress);
+			
+									}
+									else
+									{
+										System.out.println("User " + address + " sends to user " + toAddress + " frame Legth-" + line.length() + " : " + line);
+										connections.get(toAddress).os.println(line);
 									}
 								}
 								else if (line.equalsIgnoreCase("finished-send"))
@@ -144,6 +149,26 @@ public class SocketServer {
 						}
 						//System.out.println("Next to Send = " + nextToSend);
 						line = "";
+					}
+					else if (is.available() > 0)
+					{
+						line = is.readLine();
+						if (line.startsWith(Frame.getFlag()))
+						{
+							Frame recFrame = new Frame(line);
+							int toAddress = Integer.parseInt(recFrame.getDestinationAddressBinaryFromFrame(), 2);
+							
+							if (toAddress > connections.size() || toAddress < 0 || toAddress == address)
+							{
+								System.out.println("User " + address +" sent to invalid address " + toAddress);
+	
+							}
+							else
+							{
+								System.out.println("User " + address + " sends to user " + toAddress + " frame Legth-" + line.length() + " : " + line);
+								connections.get(toAddress).os.println(line);
+							}
+						}
 					}
 				}
 			

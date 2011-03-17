@@ -10,7 +10,7 @@ public class Frame {
 		this.frame = binaryString;
 	}
 	
-	public Frame(String addressBinary, String controlBinary, String informationBinary) throws Exception
+	public Frame(String addressBinary, String controlBinary, String informationBinary)
 	{
 		this.frame = addressBinary + controlBinary + informationBinary;
 		this.frame = flag + frame + generateFCS(frame) + flag;
@@ -57,7 +57,11 @@ public class Frame {
 		return Integer.parseInt(frame.substring(20,21));
 	}
 	
-	public  String getAddressBinaryFromFrame()
+	public  String getSourceAddressBinaryFromFrame()
+	{
+		return this.frame.substring(16,24);
+	}
+	public  String getDestinationAddressBinaryFromFrame()
 	{
 		return this.frame.substring(8,16);
 	}
@@ -117,7 +121,7 @@ public class Frame {
 		String stringBinaryFrame = this.frame;
 		if(this.getFrameType() == 'I')
 		{
-			NS = Integer.parseInt(stringBinaryFrame.substring(17, 20),2);
+			NS = Integer.parseInt(stringBinaryFrame.substring(25, 28),2);
 		} else
 			try {
 				throw new Exception("Incompatible type of frame to get N(S).");
@@ -133,7 +137,7 @@ public class Frame {
 		String stringBinaryFrame = this.frame;
 		if(this.getFrameType() == 'I' || this.getFrameType() == 'S')
 		{
-			NR = Integer.parseInt(stringBinaryFrame.substring(21, 24),2);
+			NR = Integer.parseInt(stringBinaryFrame.substring(29, 32),2);
 		} else
 			try {
 				throw new Exception("Incompatible type of frame.");
@@ -157,6 +161,8 @@ public class Frame {
 
 	public String getDecodedInfo() {
 		
-		return this.frame.substring(23,88);
+		String info = this.frame.substring(32,frame.length() - 24);
+		
+		return info;
 	}
 }
